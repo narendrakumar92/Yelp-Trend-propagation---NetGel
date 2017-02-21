@@ -37,3 +37,5 @@ ldamodel = gensim.models.ldamodel.LdaModel(corpus, num_topics=3, id2word = dicti
 #passes - no of iteration
 
 print ldamodel.print_topics(num_topics=3, num_words = 8)
+
+#change num_words for the desired number of words
