@@ -1,0 +1,20 @@
+Tasks List				Ownership		Status			Additional Info
+
+ER Model				Akhil			Completed
+json to csv				Akhil			Completed		
+Topic modelling with LDA and NLTK	Naren			Completed		
+				
+				
+				
+Available tasks				
+				
+Filter Business based on ER diagram				
+Filter reviews based on ER diagram				
+Filter user based on ER diagram				
+Combine the filtered data into training set				
+Apply Topic modelling for filtered data				
+Tongs Algorithm study				
+Tongs Algorithm implementation for sample matrix				
+Machine Learning study				
+Machine Learning implementation				
+(Please add whatever needed)				
