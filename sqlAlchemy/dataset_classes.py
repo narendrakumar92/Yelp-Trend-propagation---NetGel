@@ -4,6 +4,7 @@
 from sqlalchemy import Column, Integer, Float, Date, String, Text
 from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
+import re
 
 sqlalchemy_base = declarative_base()
 
@@ -37,10 +38,11 @@ class Tips(sqlalchemy_base):
 def tips_object(data):
     return Tips(**{
         'user_id': str(data[0]),
-        'text': str(data[1]),
+        'text': re.sub(r'[^\x00-\x7F]+',' ', data[1]),
         'business_id': str(data[2]),
         'likes': int(data[3]),
-        'date': datetime.strptime(str(data[4]), '%Y-%m-%y').date(),
+#        'date': datetime.strptime(str(data[4]), '%Y-%m-%y').date(),
+                'date': datetime.now(),
         'types': str(data[5]),
         })
 
