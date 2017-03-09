@@ -2,6 +2,11 @@
 *.db
 *.csv
 
+# Intellij
+*.iml
+**/.idea/workspace.xml
+**/.idea/libraries
+
 
 ################## FOR PYTHON RELATED STUFF
 # Byte-compiled / optimized / DLL files
