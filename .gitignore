@@ -4,8 +4,7 @@
 
 # Intellij
 *.iml
-**/.idea/workspace.xml
-**/.idea/libraries
+**/.idea/
 
 
 ################## FOR PYTHON RELATED STUFF
