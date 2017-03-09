@@ -1,8 +1,10 @@
 #!/usr/bin/python
 # coding=utf-8
-
+import sys
 import csv
 from numpy import genfromtxt
+
+csv.field_size_limit(sys.maxsize)
 
 def str2bool(v):
     return v.lower() in ("yes", "true", "t", "1")
