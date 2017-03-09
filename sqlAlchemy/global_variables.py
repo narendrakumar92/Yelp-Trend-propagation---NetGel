@@ -2,6 +2,7 @@
 # coding=utf-8
 
 sqlLite_database_name = 'smlProject.db'
+sqlLite_database_name_test = 'smlProject_test.db'
 file_path = '/Users/ravichandran/Documents/Misc/Docs/ASU_Subjects/Spring_17/SML/Project/Code/Yelp-Trend-propagation---NetGel/data/'
 
 added_files = []
