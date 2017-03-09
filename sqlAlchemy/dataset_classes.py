@@ -1,5 +1,7 @@
 #!/usr/bin/python
-from sqlalchemy import Column, Integer, Float, Date, String
+# coding=utf-8
+
+from sqlalchemy import Column, Integer, Float, Date, String, Text
 from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
 
@@ -27,7 +29,7 @@ class Tips(sqlalchemy_base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     user_id = Column(String)
     business_id = Column(String)
-    text = Column(String)
+    text = Column(Text)
     likes = Column(Integer)
     date = Column(Date)
     types = Column(String)
@@ -40,7 +42,7 @@ def tips_object(data):
         'likes': int(data[3]),
         'date': datetime.strptime(str(data[4]), '%Y-%m-%y').date(),
         'types': str(data[5]),
-        }),
+        })
 
 class TableDefinitions:
     def __init__(self, database_engine):

@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# coding=utf-8
 
 from global_variables import *
 from dataset_classes import *
@@ -16,19 +17,23 @@ if __name__ == "__main__":
     start_time = time()
 
     engine = create_engine('sqlite:///' + sqlLite_database_name)
+    engine.raw_connection().connection.text_factory = str
     print "Database Engine Created"
 
+    ## Function to create tables
     table_definitions = TableDefinitions(engine)
 
     session = sessionmaker()
     session.configure(bind=engine)
     dbSession = session()
 
+    ## Loop to insert each csv
     try:
         for remove_file in added_files:
             if remove_file in file_names: file_names.remove(remove_file)
         print "Processing CSV Files - Started - Files Considered Are - " + str(file_names)
         for file_name in file_names:
+            dbSession = session()
             current_time = time()
             print "@" * 20 + " - Started Processing - " + file_name
             current_file_path = file_path + file_name
