@@ -140,6 +140,38 @@ def tips_object(data):
         'date': datetime.strptime(str(data[4]), '%Y-%m-%y').date(),
         'types': str(data[5]),
         })
+        
+class Reviews(sqlalchemy_base):
+    __tablename__ = 'Reviews'
+    __table_args__ = {'sqlite_autoincrement': True}
+    review_id = Column(String, primary_key=True)
+    user_id = Column(String , ForeignKey(Users.user_id))
+    business_id = Column(String, ForeignKey(Businesses.business_id))
+#    user_id = Column(String)
+#    business_id = Column(String)
+    review_text = Column(String)
+    stars = Column(Integer)
+    funny = Column(Integer)
+    cool = Column(Integer)
+    useful = Column(Integer)
+    date = Column(Date)
+    types = Column(String)
+
+def reviews_object(data):
+    return Reviews(**{
+        'funny' : int(data[0]),
+        'user_id' : str(data[1]),
+        'review_id' : str(data[2]),
+        'review_text' : re.sub(r'[^\x00-\x7F]+',' ', data[3]),
+        'business_id' : str(data[4]),
+        'stars' : int(data[5]),
+        'date' : datetime.strptime(str(data[6]), '%Y-%m-%y').date(),
+        'useful' : int(data[7]),
+        'types' : str(data[8]),
+        'cool' : int(data[9]),
+        })
+
+
 
 class TableDefinitions:
     def __init__(self, database_engine):
@@ -155,6 +187,7 @@ def base_type_return(filename, data):
     elif filename == 'yelp_academic_dataset_tip.csv': return tips_object(data)
     elif filename == 'yelp_academic_dataset_business.csv': return businesses_object(data)
     elif filename == 'yelp_academic_dataset_user.csv': return users_object(data)
+    elif filename == 'yelp_academic_dataset_review.csv': return reviews_object(data)
     
 
 
