@@ -17,7 +17,7 @@ if __name__ == "__main__":
     start_time = time()
 
     engine = create_engine('sqlite:///' + sqlLite_database_name)
-    engine.raw_connection().connection.text_factory = str
+#    engine.raw_connection().connection.text_factory = str
     print "Database Engine Created"
 
     ## Function to create tables
@@ -46,7 +46,9 @@ if __name__ == "__main__":
             for current_data in data:
                 record = base_type_return(file_name, current_data)
                 dbSession.add(record)
+#                dbSession.commit()
             print "Adding Records To Database " + file_name + " - Ended"
+            print "#" * 10
             print "Commiting Records To Database " + file_name + " - Started"
             dbSession.commit()
             print "Commiting Records To Database " + file_name + " - Ended"
