@@ -1,7 +1,8 @@
 #!/usr/bin/python
 # coding=utf-8
 
-from sqlalchemy import Column, Integer, Float, Date, String, Text, Boolean,ForeignKey
+from sqlalchemy import *
+from sqlalchemy.orm import *
 from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
 import re
@@ -156,6 +157,8 @@ class Reviews(sqlalchemy_base):
     useful = Column(Integer)
     date = Column(Date)
     types = Column(String)
+    reviews_business = relationship("Businesses", foreign_keys=[business_id])
+    reviews_users = relationship("Users", foreign_keys=[user_id])
 
 def reviews_object(data):
     return Reviews(**{
@@ -188,7 +191,3 @@ def base_type_return(filename, data):
     elif filename == 'yelp_academic_dataset_business.csv': return businesses_object(data)
     elif filename == 'yelp_academic_dataset_user.csv': return users_object(data)
     elif filename == 'yelp_academic_dataset_review.csv': return reviews_object(data)
-    
-
-
-        
