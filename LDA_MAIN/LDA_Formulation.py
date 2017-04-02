@@ -8,6 +8,11 @@ from gensim import corpora, models
 import sqlite3 as lite
 import sys
 import re
+import numpy as numpy
+from sklearn.cluster import KMeans
+import matplotlib.pyplot as plt 
+import numpy as np
+
 
 class  LDA_Formulation:
 
@@ -123,9 +128,9 @@ class  LDA_Formulation:
 
 				
 	#user as rows and topics as columns			
-	def readUserTopics(self,file,trainingfile):
+	def readUserTopics(self,file,trainingfile,topics):
 		data = []
-		
+		User_list=[]
 
 		for line in open(file):
 			#print line
@@ -133,12 +138,13 @@ class  LDA_Formulation:
 		#iterating users
 		print data
 		rows = len(data)
-		cols = 10#topics
+		cols = topics#topics
 		#print len(data)
 		lda_user=[]
 		Adj_matrix =[[0 for x in range(cols)]for y in range(rows)]
 		userindex=0
 		for usertext in data:
+			User_list.append(usertext[0])
 			print usertext[1]
 			lda_user = str(usertext[1])
 			#print lda_user+"\n"
@@ -159,10 +165,11 @@ class  LDA_Formulation:
 						Adj_matrix[userindex][topicindex]+=1
 					topicindex+=1
 			userindex+=1
+		#Adj_matrix /= topics
 		print userindex
 		print topicindex
 		print Adj_matrix
-
+		return User_list,Adj_matrix
 
 #			print "\n\n\n"
 
@@ -170,6 +177,23 @@ class  LDA_Formulation:
 		#print data
 
 
+	def scatter_plot(self,Adj_matrix):
+		plt.plot(Adj_matrix)
+		plt.show()
+
+
+	def Kmeans_Transform(self,cluster,file,User_list,Adj_matrix):
+		kmeans = KMeans(n_clusters=cluster,random_state=0).fit(Adj_matrix)
+		labels = kmeans.labels_
+		centroid = kmeans.cluster_centers_
+		print labels
+		print centroid
+		fo = open(file,"a")
+		for i in range(len(Adj_matrix)):
+			print User_list[i] ,":" ,Adj_matrix[i] , ":" , labels[i] ,"\n"
+			line = fo.write(str(User_list[i])+":"+str(Adj_matrix[i])+":"+str(labels[i])+"\n")
+		fo.close()
+			
 
 
 
@@ -181,5 +205,8 @@ print conn
 #model.corpusLDA("CorpusData.txt","OUTPUT_FILE.txt")
 #model.extractUserID(conn)
 #model.userReviewLDA(conn,"User_Topic.txt")
-model.readUserTopics("User_Topic.txt","OUTPUT_FILE.txt")
-
+User_list,Adjacency_matrix = model.readUserTopics("User_Topic.txt","OUTPUT_FILE.txt",10)
+print len(User_list)
+print len(Adjacency_matrix)
+#model.scatter_plot(Adjacency_matrix)
+model.Kmeans_Transform(5,"Kmeans.txt",User_list,Adjacency_matrix)
