@@ -92,49 +92,62 @@ class  graph:
 			cur.execute('SELECT user_id,user_review_count from Reviews_Businesses_Users group by user_id')
 			rows = cur.fetchall()
 			for row in rows:
+				#print row[0]
+				#print row[1]
 				user_id_val.append(row[0])
 				review_count.append(row[1])
+			#print review_count
 			rows = len(user_id_val)
 			cols = len(user_id_val)
 			Adj_matrix_weighted =[[0 for x in range(cols)]for y in range(rows)]
-		
-			#print review_count.index(79)
-			#print len(user_id_val)	
-			#print len(adj_matrix)
-			for i in range(0,len(adj_matrix)):
-				reviewcnt=0#normalization
-				r = adj_matrix[i]
-				#print len(r)
-				for j in range(0,len(r)):
-					#print adj_matrix[i][j]
-					if(adj_matrix[i][j]==1):
-						#print j
-						reviewcnt+=review_count[j]
-						#self.simweight(i,j,user_matrix)
-				#print reviewcnt
-					friendsreviewcount=reviewcnt
-					userreviewcount = review_count[i]
-				print friendsreviewcount
-				print userreviewcount
-				print "\n\n"
-				#	sim = self.simweight(i,j,user_matrix)
-				#	PIJ = (userreviewcount/friendsreviewcount)*sim
-				#	Adj_matrix_weighted[i][j] = PIJ
-		#print Adj_matrix_weighted
-	def simweight(self,i,j,user_matrix):
+			topiciterator=0
+			for topiciterator in range (0,10):
+				for i in range(0,len(adj_matrix)):
+					reviewcnt=0#normalization
+					r = adj_matrix[i]
+					#print len(r)
+					for j in range(0,len(r)):
+						#print adj_matrix[i][j]
+						if(adj_matrix[i][j]==1):
+							#print j
+							reviewcnt+=review_count[j]
+							
+							friendsreviewcount=reviewcnt
+							userreviewcount = review_count[j] #change made, its sj not si
+							#outliers , if friends posted no reviews
+							if friendsreviewcount == 0:
+								friendsreviewcount  =userreviewcount
+					
+							sim = self.simweight(i,j,user_matrix,topiciterator)
+							PIJ = (userreviewcount/float(friendsreviewcount))*sim
+							#print str(userreviewcount)+ ":" +str(friendsreviewcount) +":"+str(PIJ)
+							#if userreviewcount>friendsreviewcount:
+								#print str(userreviewcount)+ ":" +str(friendsreviewcount)
+							if PIJ>1:
+								print "ERR"
+							Adj_matrix_weighted[i][j] = PIJ
+				#print Adj_matrix_weighted
+				filename_T = "Adjacency_T"+str(topiciterator)
+				npar_T = np.array(Adj_matrix_weighted)
+				np.savetxt(filename_T,npar_T,fmt='%f')
+				
+
+	def simweight(self,i,j,user_matrix,topiciterator):
 		user_mat1 = user_matrix[i]
 		user_mat2 = user_matrix[j]
 		sum=0
 		for i in range (0,len(user_mat1)):
 			sum+=user_mat1[i]
-		normalizedDTIT = user_mat1[0]/sum
+		normalizedDTIT = user_mat1[topiciterator]/sum
 
 		sum=0
 		for i in range (0,len(user_mat2)):
 			sum+=user_mat2[i]
-		normalizedDTJT = user_mat2[0]/sum
+		normalizedDTJT = user_mat2[topiciterator]/sum
 
 		simcal = 1 - abs(normalizedDTIT-normalizedDTJT)
+		if simcal>1:
+			print "greater"
 		return simcal
 
 			
