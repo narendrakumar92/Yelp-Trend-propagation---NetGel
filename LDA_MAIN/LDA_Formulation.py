@@ -208,5 +208,8 @@ print conn
 User_list,Adjacency_matrix = model.readUserTopics("User_Topic.txt","OUTPUT_FILE.txt",10)
 print len(User_list)
 print len(Adjacency_matrix)
+npar = np.array(Adjacency_matrix)
+np.savetxt('User_id_adj.out',npar,fmt='%d')
+
 #model.scatter_plot(Adjacency_matrix)
-model.Kmeans_Transform(5,"Kmeans.txt",User_list,Adjacency_matrix)
+#model.Kmeans_Transform(5,"Kmeans.txt",User_list,Adjacency_matrix)
