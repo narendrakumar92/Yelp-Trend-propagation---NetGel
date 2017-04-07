@@ -12,6 +12,8 @@ import numpy as numpy
 from sklearn.cluster import KMeans
 import matplotlib.pyplot as plt 
 import numpy as np
+import stop_words_yelp
+stop_word_list = stop_words_yelp.stop_word_list
 
 
 class  LDA_Formulation:
@@ -31,9 +33,23 @@ class  LDA_Formulation:
 			reviewrows = cur.fetchall()
 			for review in reviewrows:
 				reviewtext+=review[0]
-			fo = open(filename,"a")	
-			line = fo.write(reviewtext)
-			fo.close()
+
+			
+			str = reviewtext.split(' ')
+			vocab_list = [word.lower().strip() for word in str if (word.lower().strip() + ' ' not in stop_word_list)]
+			text=""
+			i=0;
+			userlist_npar = np.array(vocab_list)
+			np.savetxt(filename,userlist_npar,fmt='%s')
+			#for word in vocab_list:
+			#	text=text+" "+word
+			#	i=i+1
+			#	print i
+
+
+			#fo = open(filename,"a")	
+			#line = fo.write(text)
+			#fo.close()
 
 	def corpusLDAUtil(self,sampletext,ntopics,nwords,file):
 		p_stemmer = PorterStemmer()
@@ -47,7 +63,7 @@ class  LDA_Formulation:
 		dictionary = corpora.Dictionary(texts)
 		corpus = [dictionary.doc2bow(text) for text in texts]
 
-		ldamodel = gensim.models.ldamodel.LdaModel(corpus, num_topics=ntopics, id2word = dictionary,passes = 1)
+		ldamodel = gensim.models.ldamodel.LdaModel(corpus, num_topics=ntopics, id2word = dictionary,passes = 100)
 		out = ldamodel.show_topics(num_topics=ntopics,num_words=nwords,log=False,formatted=False)
 		print len(out)
 		for i in range(0,len(out)):
@@ -99,7 +115,7 @@ class  LDA_Formulation:
 			content = f.read()
     		#print content
     		sampletext = content
-    		self.corpusLDAUtil(sampletext,10,20,file)
+    		self.corpusLDAUtil(sampletext,10,200,file)
     		
 
 	def extractUserID(self,con):
@@ -124,7 +140,7 @@ class  LDA_Formulation:
 				reviewrows = cur.fetchall()
 				for review in reviewrows:
 					reviewtext+=review[0]
-				self.corpusLDAUsers(user_id,reviewtext,1,20,file)
+				self.corpusLDAUsers(user_id,reviewtext,1,200,file)
 
 				
 	#user as rows and topics as columns			
@@ -193,6 +209,57 @@ class  LDA_Formulation:
 			print User_list[i] ,":" ,Adj_matrix[i] , ":" , labels[i] ,"\n"
 			line = fo.write(str(User_list[i])+":"+str(Adj_matrix[i])+":"+str(labels[i])+"\n")
 		fo.close()
+
+	def LDAcleanup(self,filename):
+		list_data = []
+		elements = []
+		index=0
+		for line in open(filename):
+	#		#print line
+			linedata = line.strip().split(',')
+			for word in linedata:
+				list_data.append(word)
+
+			elements.append(linedata)
+			print len(linedata)
+		print list_data
+		print len(list_data)
+		myset = set(list_data)
+		print myset
+		print len(myset)
+
+		
+		#iteration
+		#print elements
+
+		#hashset unique values
+
+#		flag = 0
+#		lda_elements = []
+#		
+#		for data in elements:
+#			listnew =[]	
+		
+			#print len(data)
+#			if flag>=1:
+#				#print len(data)
+#				for rowdata in data:
+					#print rowdata
+#					if rowdata not in prev:
+#						listnew.append(rowdata)
+#					else:
+#						print rowdata
+#				lda_elements.append(listnew)
+#			if flag==0:
+#				lda_elements.append(data)	
+#			
+#			flag+=1
+#			prev = data
+#			print flag
+#		print lda_elements
+#		npar = np.array(lda_elements)
+#		np.savetxt('LDA_OPTIMIZED.out',npar,fmt='%s')
+	
 			
 
 
@@ -201,15 +268,17 @@ model = LDA_Formulation("smlProject_v2_usr(str-4,fans-50,review_count-50)_busine
 conn = model.connection()
 print conn
 
-#model.corpusFormulation(conn,"CorpusData.txt")
-#model.corpusLDA("CorpusData.txt","OUTPUT_FILE.txt")
+#model.corpusFormulation(conn,"CorpusData_STOPWORDS.txt")
+#model.corpusLDA("CorpusData_STOPWORDS.txt","OUTPUT_FILE_NEW_10TOPICS_FINAL.txt")
+##model.LDAcleanup("OUTPUT_FILE_NEW_100Topics.txt")
 #model.extractUserID(conn)
-#model.userReviewLDA(conn,"User_Topic.txt")
-User_list,Adjacency_matrix = model.readUserTopics("User_Topic.txt","OUTPUT_FILE.txt",10)
+#model.userReviewLDA(conn,"User_Topic_200_new.txt")
+User_list,Adjacency_matrix = model.readUserTopics("User_Topic_200_new.txt","OUTPUT_FILE_NEW_10TOPICS_FINAL.txt",10)
 print len(User_list)
 print len(Adjacency_matrix)
 npar = np.array(Adjacency_matrix)
-np.savetxt('User_id_adj.out',npar,fmt='%d')
+np.savetxt('User_id_adj_new_10_FINAL.out',npar,fmt='%d')
 
 #model.scatter_plot(Adjacency_matrix)
-#model.Kmeans_Transform(5,"Kmeans.txt",User_list,Adjacency_matrix)
+
+model.Kmeans_Transform(5,"Kmeans_FINAL.txt",User_list,Adjacency_matrix)

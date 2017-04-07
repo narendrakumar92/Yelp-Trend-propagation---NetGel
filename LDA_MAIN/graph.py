@@ -79,7 +79,7 @@ class  graph:
 		nparr = np.loadtxt('Adjacency.out',dtype=int)
 		adj_matrix = nparr.tolist()
 		#print adj_matrix
-		npar = np.loadtxt('User_id_adj.out',dtype=int)
+		npar = np.loadtxt('User_id_adj_new_10_FINAL.out',dtype=int)
 		user_matrix = npar.tolist()
 		#print user_matrix
 		user_list_npar = np.loadtxt('user_list.out',dtype=str)
@@ -99,9 +99,10 @@ class  graph:
 			#print review_count
 			rows = len(user_id_val)
 			cols = len(user_id_val)
-			Adj_matrix_weighted =[[0 for x in range(cols)]for y in range(rows)]
 			topiciterator=0
 			for topiciterator in range (0,10):
+				Adj_matrix_weighted =[[0 for x in range(cols)]for y in range(rows)]
+			
 				for i in range(0,len(adj_matrix)):
 					reviewcnt=0#normalization
 					r = adj_matrix[i]
@@ -126,28 +127,41 @@ class  graph:
 							if PIJ>1:
 								print "ERR"
 							Adj_matrix_weighted[i][j] = PIJ
+							x=i
+							y=j
+				print PIJ
+				print x 
+				print y
+							
 				#print Adj_matrix_weighted
 				filename_T = "Adjacency_T"+str(topiciterator)
 				npar_T = np.array(Adj_matrix_weighted)
 				np.savetxt(filename_T,npar_T,fmt='%f')
+				print "\n"
 				
 
 	def simweight(self,i,j,user_matrix,topiciterator):
+		#print topiciterator
 		user_mat1 = user_matrix[i]
 		user_mat2 = user_matrix[j]
 		sum=0
 		for i in range (0,len(user_mat1)):
 			sum+=user_mat1[i]
-		normalizedDTIT = user_mat1[topiciterator]/sum
-
+		normalizedDTIT = user_mat1[topiciterator]/(sum*1.0)
+		#print user_mat1[topiciterator]
 		sum=0
 		for i in range (0,len(user_mat2)):
 			sum+=user_mat2[i]
-		normalizedDTJT = user_mat2[topiciterator]/sum
+		normalizedDTJT = user_mat2[topiciterator]/(sum*1.0)
 
-		simcal = 1 - abs(normalizedDTIT-normalizedDTJT)
+		#print normalizedDTJT 
+		#print normalizedDTIT
+		#print "\n"
+		simcal = 1 - (abs(normalizedDTIT-normalizedDTJT))
 		if simcal>1:
 			print "greater"
+		if simcal<0:
+			print "lesser"
 		return simcal
 
 			
