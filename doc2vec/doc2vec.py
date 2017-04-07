@@ -18,6 +18,7 @@ def extractUserID(con):
         con.commit()
 extractUserID(con)
 i = 0
+users = []
 with con:
     cur = con.cursor()
     cur.execute('SELECT user_id from user_id_details')
@@ -25,6 +26,7 @@ with con:
     for row in rows:
         i += 1
         reviewtext = ""
+        users.append(row[0])
         user_id = row[0]
         print "No."+str(i)+" User ID:"+user_id
         id = str("WKIW7tWyMq7_XN0V2ouo0A")
@@ -33,7 +35,7 @@ with con:
         for review in reviewrows:
             reviewtext+=re.sub('[^A-Za-z0-9\']+', ' ', review[0])
         reviewtext = reviewtext.split()
-        sent = LabeledSentence(words=reviewtext,tags=[id])
+        sent = LabeledSentence(words=reviewtext,tags=[user_id])
         it.append(sent)
         # if(i == 2):
         #     break
@@ -49,5 +51,5 @@ for epoch in range(15):
 model.save("doc2vec.model")
 print "Doc vectors of dimension 50:"
 print model.docvecs[u'WKIW7tWyMq7_XN0V2ouo0A'] #name of the userreviewdoc; returns vector for each document
-print model.docvecs.most_similar(u'WKIW7tWyMq7_XN0V2ouo0A')
+print model.docvecs.most_similar(users[2])
 
