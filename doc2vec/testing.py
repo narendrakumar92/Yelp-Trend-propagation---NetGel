@@ -30,7 +30,7 @@ vec = []
 for user in user_id:
     vec.append(model.docvecs[user])
 
-print model.most_similar('chilly')
+print model.most_similar('pork')
 
 
 def Kmeans_Transform(cluster,file,User_list,vec):
@@ -45,4 +45,4 @@ def Kmeans_Transform(cluster,file,User_list,vec):
             line = fo.write(str(labels[i])+"\n")
         fo.close()
 
-# Kmeans_Transform(5,"Doc2Vec_Kmeans.txt",user_id,vec)
+Kmeans_Transform(5,"Doc2Vec_Kmeans.txt",user_id,vec)

@@ -52,7 +52,7 @@ with con:
 
 model = gensim.models.Doc2Vec(min_count=5, window=5, size=100, sample=1e-4, negative=5, workers=8) # use fixed learning rate
 model.build_vocab(it)
-for epoch in range(15):
+for epoch in range(10):
     print epoch
     model.train(it)
     model.alpha -= 0.002 # decrease the learning rate
