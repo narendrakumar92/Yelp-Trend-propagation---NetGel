@@ -182,17 +182,25 @@ class  graph:
 		data = []
 		for line in open(filename):
 			data.append(tuple(line.strip().split(':')))
+
 		for i in range (0,cluster_size):
 			cluster_data =[]
+			index_val = []
+			count_index=0
 			for rowdata in data:
 				if (rowdata[2]==str(i)):
 					cluster_data.append(rowdata)
-			print cluster_data
+					index_val.append(count_index)
+				count_index+=1
+			#print cluster_data
+			#print cluster_data
 			file = "Cluster_data"+str(i)
 			fo = open(file,"a")
+			count_iter = 0
 			for dataout in cluster_data:
-				print dataout[0] ,":" ,dataout[1] , ":" , dataout[2] ,"\n"
-				line = fo.write(str(dataout[0])+":"+str(dataout[1])+":"+str(dataout[2])+"\n")
+				#print dataout[0] ,":" ,dataout[1] , ":" , dataout[2] ,"\n"
+				line = fo.write(str(index_val[count_iter])+":"+str(dataout[0])+":"+str(dataout[1])+":"+str(dataout[2])+"\n")
+				count_iter+=1
 			fo.close()
 
 	def Testdata(self,filename,centroidfile,num_cluster):
@@ -246,6 +254,59 @@ class  graph:
 		fo = open("test_data.out","a")
 		fo.write(str(randval)+":"+str(test_data_vector)+":"+str(cluster_min_dist)+"\n")
 		fo.close()
+
+	def TestData_AdjMatrix(self,con,test_data_file):
+		data = []
+		for line in open(test_data_file):
+			data.append(tuple(line.strip().split(':')))
+
+		cluster_num =  data[0][2]
+		filename = "Cluster_data"+str(cluster_num)
+		print filename
+		for line in open(filename):
+			data.append(tuple(line.strip().split(':')))
+		user_list = []
+		user_vector = []
+
+		for rowdata in data:
+			user_list.append(rowdata[0])
+		
+		rows =  len(user_list)
+		cols = len(user_list)
+
+		Adj_matrix =[[0 for x in range(cols)]for y in range(rows)]
+		
+		with con:
+			cur = con.cursor()
+			cur.execute('SELECT distinct user_id,user_friends from Reviews_Businesses_Users')
+			userdata = cur.fetchall()
+	
+
+			for data in userdata:
+				userId = data[0]
+				if userId in user_list:
+					userindex = user_list.index(userId)
+					friendsList = data[1]
+					list = friendsList.split()
+					#print list[0]+"\n\n\n"
+					#line = fo.write(userId+":")
+					for i in range(0,len(list)):
+						s = list[i].replace(",","")
+						s = s.replace("'","")
+						s = s.replace("[","")
+						strval = s.replace("]","")
+						if strval in user_list:
+							#print str
+							colindex = user_list.index(strval)
+							#print colindex
+							Adj_matrix[userindex][colindex]=1
+						
+			print Adj_matrix
+			npar = np.array(Adj_matrix)
+			np.savetxt('Kmeans_Adjacency.out',npar,fmt='%d')
+			
+
+
 		
 
 
@@ -274,3 +335,4 @@ conn = graph.connection()
 #graph.similarityComputation(conn)
 #graph.Kmeans_clusterSeparate('Kmeans_FINAL.txt',5)
 #graph.Testdata('User_id_adj_ravi.out','centroid.out',5)
+graph.TestData_AdjMatrix(conn,"test_data.out")
