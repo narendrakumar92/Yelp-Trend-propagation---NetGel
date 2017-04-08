@@ -4,7 +4,12 @@ from nltk.tokenize import RegexpTokenizer
 tokenizer = RegexpTokenizer(r'\w+')
 import sqlite3 as lite
 import re
+import stop_words_yelp
+from nltk.stem.porter import PorterStemmer
+from stop_words import get_stop_words
 
+stop_word_list = stop_words_yelp.stop_word_list
+p_stemmer = PorterStemmer()
 LabeledSentence = gensim.models.doc2vec.LabeledSentence
 it = []
 
@@ -35,12 +40,17 @@ with con:
         for review in reviewrows:
             reviewtext+=re.sub('[^A-Za-z0-9\']+', ' ', review[0])
         reviewtext = reviewtext.split()
-        sent = LabeledSentence(words=reviewtext,tags=[user_id])
+        en_stop = get_stop_words('en')
+        stopped_tokens = [j.lower() for j in reviewtext if not j in en_stop]
+        # stemmed_token = [p_stemmer.stem(i) for i in stopped_tokens]
+        # vocab_list = [word.lower().strip() for word in stopped_tokens if (word.lower().strip() + ' ' not in stop_word_list)]
+        # print stopped_tokens
+        sent = LabeledSentence(words=stopped_tokens,tags=[user_id])
         it.append(sent)
         # if(i == 2):
-        #     break
+        # break
 
-model = gensim.models.Doc2Vec(size=300, window=10, min_count=5, workers=11,alpha=0.025, min_alpha=0.025) # use fixed learning rate
+model = gensim.models.Doc2Vec(min_count=5, window=5, size=100, sample=1e-4, negative=5, workers=8) # use fixed learning rate
 model.build_vocab(it)
 for epoch in range(15):
     print epoch
@@ -50,6 +60,6 @@ for epoch in range(15):
     model.train(it)
 model.save("doc2vec.model")
 print "Doc vectors of dimension 50:"
-print model.docvecs[u'WKIW7tWyMq7_XN0V2ouo0A'] #name of the userreviewdoc; returns vector for each document
+print model.docvecs[users[40]].__len__() #name of the userreviewdoc; returns vector for each document
 print model.docvecs.most_similar(users[2])
-
+print model.most_similar('tacos')
