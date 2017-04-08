@@ -8,11 +8,12 @@ from gensim import corpora, models
 import sqlite3 as lite
 import sys
 import re
+from random import randint
 
 from sklearn.cluster import KMeans
 import matplotlib.pyplot as plt 
 import numpy as np
-
+import string
 
 class  graph:
 
@@ -177,8 +178,81 @@ class  graph:
 			print "lesser"
 		return simcal
 
-	def Kmeans_Adj(self,filename):
+	def Kmeans_clusterSeparate(self,filename,cluster_size):
+		data = []
+		for line in open(filename):
+			data.append(tuple(line.strip().split(':')))
+		for i in range (0,cluster_size):
+			cluster_data =[]
+			for rowdata in data:
+				if (rowdata[2]==str(i)):
+					cluster_data.append(rowdata)
+			print cluster_data
+			file = "Cluster_data"+str(i)
+			fo = open(file,"a")
+			for dataout in cluster_data:
+				print dataout[0] ,":" ,dataout[1] , ":" , dataout[2] ,"\n"
+				line = fo.write(str(dataout[0])+":"+str(dataout[1])+":"+str(dataout[2])+"\n")
+			fo.close()
+
+	def Testdata(self,filename,centroidfile,num_cluster):
+		user_vector = []
+		for line in open(filename):
+			strval = line.strip().translate(None, string.punctuation)
+			user_vector.append(strval)
+
+		#print len(user_vector)
+		randval = randint(0,len(user_vector))
+		#print randval
+		test_data = user_vector[randval]
+		print test_data
+
+		test_data_vector =[]
+		int_val = test_data.split()
+		for val in int_val:
+			test_data_vector.append(int(val))
+
+		print test_data_vector
+		centroid_list=[]
+		for line in open(centroidfile):
+			strval = line.strip().translate(None, string.punctuation)
+			centroid_list.append(strval)
+
+		#print centroid_list
+
+		centroid_vector_2d = []
+		for row_data in centroid_list:
+			centroid_vector = []
+			row_data = row_data.strip()
+			row_data = row_data.split()
+			#print row_data
+			for val in row_data:
+				#print val
+				centroid_vector.append(int(val))
+			centroid_vector_2d.append(centroid_vector)
+		print centroid_vector_2d
+
+		dist = []
+		a = np.array(test_data_vector)
+		for i in range (0,num_cluster):
+			b = np.array(centroid_vector_2d[i])
+			dis = np.linalg.norm(a-b)
+			dist.append(dis)
+
+		print dist
+		cluster_min_dist = dist.index(min(dist))
+		print cluster_min_dist
+
+		fo = open("test_data.out","a")
+		fo.write(str(randval)+":"+str(test_data_vector)+":"+str(cluster_min_dist)+"\n")
+		fo.close()
 		
+
+
+
+
+
+
 
 			
 
@@ -197,5 +271,6 @@ graph = graph("smlProject_v2_usr(str-4,fans-50,review_count-50)_business(review_
 conn = graph.connection()
 #graph.matrix_FriendsList(conn,"Graphfriends.txt","Adj_matrix.txt")
 #print conn
-graph.similarityComputation(conn)
-graph.Kmeans_Adj('Kmeans_FINAL.txt')
+#graph.similarityComputation(conn)
+#graph.Kmeans_clusterSeparate('Kmeans_FINAL.txt',5)
+#graph.Testdata('User_id_adj_ravi.out','centroid.out',5)

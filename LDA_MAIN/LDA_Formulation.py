@@ -231,13 +231,19 @@ class  LDA_Formulation:
 		kmeans = KMeans(n_clusters=cluster,random_state=0).fit(Adj_matrix)
 		labels = kmeans.labels_
 		centroid = kmeans.cluster_centers_
-		print labels
+		#print labels
 		print centroid
 		fo = open(file,"a")
 		for i in range(len(Adj_matrix)):
-			print User_list[i] ,":" ,Adj_matrix[i] , ":" , labels[i] ,"\n"
+			#print User_list[i] ,":" ,Adj_matrix[i] , ":" , labels[i] ,"\n"
 			line = fo.write(str(User_list[i])+":"+str(Adj_matrix[i])+":"+str(labels[i])+"\n")
 		fo.close()
+
+		npar = np.array(centroid)
+		np.savetxt('centroid.out',npar,fmt='%d')
+			
+
+
 
 	def LDAUnique(self,filename,file):
 		list_set = set()
@@ -320,14 +326,14 @@ print conn
 ##model.LDAcleanup("OUTPUT_FILE_NEW_100Topics.txt")
 #model.extractUserID(conn)
 #model.userReviewLDA(conn,"User_Topic_corpus.txt")
-#User_list,Adjacency_matrix = model.readUserTopics("User_Topic_corpus.txt","LDA_TOPIC_APR7.txt",10)
-#print len(User_list)
-#print len(Adjacency_matrix)
-#npar = np.array(Adjacency_matrix)
-#np.savetxt('User_id_adj_ravi.out',npar,fmt='%d')
+User_list,Adjacency_matrix = model.readUserTopics("User_Topic_corpus.txt","LDA_TOPIC_APR7.txt",10)
+print len(User_list)
+print len(Adjacency_matrix)
+npar = np.array(Adjacency_matrix)
+np.savetxt('User_id_adj_ravi.out',npar,fmt='%d')
 
 #model.scatter_plot(Adjacency_matrix)
 
-#model.Kmeans_Transform(5,"Kmeans_FINAL.txt",User_list,Adjacency_matrix)
+model.Kmeans_Transform(5,"Kmeans_FINAL.txt",User_list,Adjacency_matrix)
 
 
