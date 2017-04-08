@@ -31,44 +31,52 @@ class  graph:
 			userdata = cur.fetchall()
 
 			
-			print len(user_list)
+			#print len(user_list)
 
-			print len(userdata)
-			rows=len(userdata)
-			cols=len(userdata)
-			Adj_matrix =[[0 for x in range(cols)]for y in range(rows)]
+			remove_index = [3,2,8,34,9,1,4,10,12,14,60,5,11,63,21,7,13,61,15,123]
+			
+			#print len(userdata)
 			
 			#fo = open(filename,"a")
 			userindex=0
 			fo = open(filename,"a")
 			for data in userdata:
 				userId = data[0]
-				user_list.append(userId)	
+				if userdata.index(data) not in remove_index: 
+					user_list.append(userId)	
+
+			rows=len(user_list)
+			cols=len(user_list)
+			Adj_matrix =[[0 for x in range(cols)]for y in range(rows)]
+			
+
+			print len(user_list)
 			
 
 			for data in userdata:
-				userId = data[0]
-				friendsList = data[1]
-				list = friendsList.split()
-				#print list[0]+"\n\n\n"
-				line = fo.write(userId+":")
-				for i in range(0,len(list)):
-					s = list[i].replace(",","")
-					s = s.replace("'","")
-					s = s.replace("[","")
-					str = s.replace("]","")
-					if str in user_list:
-						#print str
-						colindex = user_list.index(str)
-						print colindex
-						Adj_matrix[userindex][colindex]=1
-					line = fo.write(str+",")
-				userindex+=1
-				line = fo.write("\n")
+				if userdata.index(data) not in remove_index:
+					userId = data[0]
+					friendsList = data[1]
+					list = friendsList.split()
+					#print list[0]+"\n\n\n"
+					line = fo.write(userId+":")
+					for i in range(0,len(list)):
+						s = list[i].replace(",","")
+						s = s.replace("'","")
+						s = s.replace("[","")
+						str = s.replace("]","")
+						if str in user_list:
+							#print str
+							colindex = user_list.index(str)
+							#print colindex
+							Adj_matrix[userindex][colindex]=1
+						line = fo.write(str+",")
+					userindex+=1
+					line = fo.write("\n")
 			fo.close()
 			print Adj_matrix
 			npar = np.array(Adj_matrix)
-			np.savetxt('Adjacency.out',npar,fmt='%d')
+			np.savetxt('Adjacency_new.out',npar,fmt='%d')
 			userlist_npar = np.array(user_list)
 			np.savetxt('user_list.out',userlist_npar,fmt='%s')
 	
@@ -76,10 +84,10 @@ class  graph:
 
 	def similarityComputation(self,con):
 		
-		nparr = np.loadtxt('Adjacency.out',dtype=int)
+		nparr = np.loadtxt('Adjacency_new.out',dtype=int)
 		adj_matrix = nparr.tolist()
 		#print adj_matrix
-		npar = np.loadtxt('User_id_adj_new_10_FINAL.out',dtype=int)
+		npar = np.loadtxt('User_id_adj_ravi.out',dtype=int)
 		user_matrix = npar.tolist()
 		#print user_matrix
 		user_list_npar = np.loadtxt('user_list.out',dtype=str)
@@ -91,22 +99,26 @@ class  graph:
 			cur = con.cursor()
 			cur.execute('SELECT user_id,user_review_count from Reviews_Businesses_Users group by user_id')
 			rows = cur.fetchall()
+			remove_index = [3,2,8,34,9,1,4,10,12,14,60,5,11,63,21,7,13,61,15,123]
+			
 			for row in rows:
 				#print row[0]
 				#print row[1]
-				user_id_val.append(row[0])
-				review_count.append(row[1])
-			#print review_count
+				if rows.index(row) not in remove_index:
+					user_id_val.append(row[0])
+					review_count.append(row[1])
+				#print review_count
 			rows = len(user_id_val)
 			cols = len(user_id_val)
 			topiciterator=0
 			for topiciterator in range (0,10):
 				Adj_matrix_weighted =[[0 for x in range(cols)]for y in range(rows)]
-			
+				#user iteration
 				for i in range(0,len(adj_matrix)):
 					reviewcnt=0#normalization
 					r = adj_matrix[i]
 					#print len(r)
+
 					for j in range(0,len(r)):
 						#print adj_matrix[i][j]
 						if(adj_matrix[i][j]==1):
@@ -126,12 +138,13 @@ class  graph:
 								#print str(userreviewcount)+ ":" +str(friendsreviewcount)
 							if PIJ>1:
 								print "ERR"
+							#PIJ = int(PIJ*1000)
 							Adj_matrix_weighted[i][j] = PIJ
 							x=i
 							y=j
 				print PIJ
-				print x 
-				print y
+				print i 
+				print j
 							
 				#print Adj_matrix_weighted
 				filename_T = "Adjacency_T"+str(topiciterator)
@@ -164,6 +177,9 @@ class  graph:
 			print "lesser"
 		return simcal
 
+	def Kmeans_Adj(self,filename):
+		
+
 			
 
 
@@ -182,3 +198,4 @@ conn = graph.connection()
 #graph.matrix_FriendsList(conn,"Graphfriends.txt","Adj_matrix.txt")
 #print conn
 graph.similarityComputation(conn)
+graph.Kmeans_Adj('Kmeans_FINAL.txt')
