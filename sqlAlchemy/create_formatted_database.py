@@ -43,8 +43,8 @@ def run_query_and_add_data(class_name,join_class_name,class_attributes):
 
     print "Started Query Processing for " + class_name
 
-    businesses_condition = (Businesses.review_count > 5500) & (categories_conditon)
-    users_condition = (Users.average_stars > 4) & (Users.review_count > 50) & (Users.fans > 50)
+    businesses_condition = (Businesses.review_count > 5) & (categories_conditon)
+    users_condition = (Users.average_stars > 3) & (Users.review_count > 50) & (Users.fans > 5)
 
     select_query = import_db_session.query(eval(class_name), Businesses, Users).filter(businesses_condition).filter(
         users_condition).join(Businesses).join(Users)

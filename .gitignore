@@ -1,6 +1,7 @@
 **/data/
 *.db
 *.csv
+*.out
 
 # Intellij
 *.iml
