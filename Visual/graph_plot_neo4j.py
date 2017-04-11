@@ -45,19 +45,23 @@ def form_relations(users):
 	print("Total edges created: %d" % edges_created)
 
 
-spl_count = 0
+k_means = 2
+twitter_propagation = 9
+include_info_prop = True
+info_count = 0
 plotted_nodes = []
 plotted_node_flag = False
 unavailable_nodes = []
 edges_created = 0
 # Creating relationships for highest user
-def form_1_relations(highest_friend_user, users, level):
+def form_1_relations(highest_friend_user, users, level, k_means_propagation = 0):
 	global plotted_nodes
 	global plotted_node_flag
 	global unavailable_nodes
 	global edges_created
 
-	global spl_count
+	global info_count
+	global include_info_prop
 	friends_ids = highest_friend_user.properties['friends'] #str.split(user.properties['friends'], ", ")
 	friends = []
 
@@ -71,7 +75,17 @@ def form_1_relations(highest_friend_user, users, level):
 					continue
 				# To get different color changing node label
 				node = users[friend_user_id]
-				friend_user = Node("Friend" + str(level), userId=node.properties['userId'], friends=node.properties['friends'])
+				if include_info_prop == True:
+					#if info_count % k_means_propagation == 0:
+					if k_means_propagation > 0:
+						friend_user = Node("InformationPropagation", userId=node.properties['userId'], friends=node.properties['friends'])
+					else:
+						friend_user = Node("Friend" + str(level), userId=node.properties['userId'], friends=node.properties['friends'])
+					k_means_propagation -= 1
+					#info_count += 1
+				else:
+					friend_user = Node("Friend" + str(level), userId=node.properties['userId'], friends=node.properties['friends'])
+				
 				#friend_user = Node("User", userId=node.properties['userId'], friends=node.properties['friends'])
 				
 				friend_edge = Relationship(highest_friend_user, str(level), friend_user)
@@ -87,12 +101,6 @@ def form_1_relations(highest_friend_user, users, level):
 				if friend_user.properties['userId'] in plotted_nodes:
 					plotted_node_flag = True
 					break
-
-				if (highest_friend_user.properties['userId'] in plotted_nodes) and level == 3:
-					print(plotted_node_flag)
-					spl_count+=1
-					print(spl_count)
-					print(highest_friend_user.properties['userId'] + '_' + friend_user.properties['userId'])
 
 				if plotted_node_flag != True:
 					friends += [friend_user]
@@ -110,6 +118,7 @@ def form_friend_relations(users_count_dict, users, k):
 	global plotted_nodes
 	global plotted_node_flag
 	global edges_created
+	global k_means
 	num_of_nodes = 0
 	friends = []
 	local_users = []
@@ -117,15 +126,18 @@ def form_friend_relations(users_count_dict, users, k):
 	# Extract the k most influential users, k = 3
 	for i in sorted(users_count_dict, reverse=True)[0:k]:
 		local_users += [users_count_dict[i]]
+		print(users_count_dict[i])
 		plotted_nodes += [users_count_dict[i].properties['userId']]
 
 	for level in range(1,3):
 		print("LEVEL%d ------------------------------"% level)
+		k_means_propagation = k_means
+		#local_users.reverse()
 		for user in local_users:
 			friends_ids = user.properties['friends'] #str.split(user.properties['friends'], ", ")
 			num_of_nodes += 1
 			print("No.:%d .. Friends count: %d" % (num_of_nodes, len(friends_ids)))
-			friends += form_1_relations(user, users, level)
+			friends += form_1_relations(user, users, level, k_means_propagation)
 		
 		local_users = friends
 
@@ -133,10 +145,96 @@ def form_friend_relations(users_count_dict, users, k):
 	print("Total edges created: %d" % edges_created)
 
 
-def get_highest_friends_count_users2(all_rows):
+def get_total_count_friends(users, users_ids):
 	highest_count_users = {}
+	for user_id,user in users.items():
+		count = 0
+		friends_list = user.properties['friends']
+		for friend_id in friends_list:
+			if friend_id in users_ids:
+				count += 1
+
+		highest_count_users[count] = users[user_id]
+
+	return highest_count_users
+
+
+def create_edges_for_nodes(users_at_levels, levels):
+	edges_created = 0
+	idx=0
+	if levels > 1:
+		for level in range(2,levels+1):
+			print('In level %d of edge creation' % level)
+			for next_user in users_at_levels[idx+1]:
+				for user in users_at_levels[idx]:
+					if user != next_user and (next_user.properties['userId'] in user.properties['friends']):
+
+						#node = graph.find("Friend" + str(level-2), "userId", user.properties['userId'])
+						
+
+						if level > 2:
+						# 	print(len(users_at_levels))
+						# 	print(idx)
+						# 	print(user in users_at_levels[idx])
+						# 	print(user.properties['userId'])
+							user =  graph.find_one("Friend1", property_key="userId", property_value=user.properties['userId'])
+							# print(user)
+							# m = graph.match_one(start_node=user)
+							# print(m)
+							# m = list(graph.match_one(end_node=user))
+							# print(m)
+							# print(m[0])
+							# exit()
+							user.remove_label('InformationPropagation')
+							user.add_label("Friend" + str(level-2))
+							#friend_user1 = Node("Friend" + str(level-2), userId=user.properties['userId'], friends=user.properties['friends'])
+							#user = friend_user1
+						friend_user2 = Node("Friend" + str(level-1), userId=next_user.properties['userId'], friends=next_user.properties['friends'])
+						friend_edge = Relationship(user, str(level-1), friend_user2)
+
+						# Exception can occur if the edges were already created
+						try:
+							graph.create(friend_edge)
+							edges_created += 1
+						except ConstraintError:
+							#print(user.properties['userId'])
+							pass
+
+			idx+=1
+
+	print("Total edges created: %d" % edges_created)
+
+def get_final_node_map(users, users_ids, k, levels):
+	users_at_levels = [[] for i in range(levels)]
+	idx = 0
+	for level in range(1,levels+1):
+		print('In level %d of mapping' % level)	
+		if level == 1:
+			highest_count_users = get_total_count_friends(users, users_ids)
+			# Get the influential users
+			for i in sorted(highest_count_users, reverse=True)[0:k]:
+				if len(users_at_levels) == 0:
+					users_at_levels = [[highest_count_users[i]]]
+				else:
+					users_at_levels[idx] += [highest_count_users[i]]
+		else:
+			print(idx)
+			print(len(users_at_levels))
+			for user in users_at_levels[idx-1]:
+				for user_id in users_ids:
+					if user_id in user.properties['friends'] and user_id in users:
+						users_at_levels[idx] += [users[user_id]]
+						users.pop(user_id)
+
+		idx+=1
+
+	return users_at_levels
+
+
+def get_friends_count_users(all_rows):
 	all_users = {}
-	num_of_nodes = 60
+	all_user_ids = []
+	num_of_nodes = 300
 	for row in all_rows:
 		if num_of_nodes > 0:
 			user_id = str.split(row[0], ":")
@@ -145,16 +243,21 @@ def get_highest_friends_count_users2(all_rows):
 			friends_list = row
 			# user_id = row[5]
 			# friends_list = row[7]
-			user = Node("User", userId=user_id, friends=friends_list)
+			# user = Node("InfluentialUser", userId=user_id, friends=friends_list)
+			user = Node("InformationPropagation", userId=user_id, friends=friends_list) 
+			# print(user.labels())
+			# exit()
 			all_users[user_id] = user
+			all_user_ids += [user_id]
 			num_of_nodes -= 1
-			highest_count_users[len(friends_list)] = user
 		else:
 			break
 
-	return highest_count_users, all_users
+	#highest_count_users = get_total_count_friends(all_users, all_user_ids)
+	#return highest_count_users, all_users
+	return all_users, all_user_ids
 
-def get_highest_friends_count_users(all_rows):
+def get_known_highest_friends_count_users(all_rows):
 	highest_count_users = {}
 	all_users = {}
 	for row in all_rows:
@@ -172,16 +275,9 @@ def get_highest_friends_count_users(all_rows):
 		all_users[user_id] = user
 		if user_id in ['folPdHjHOS0g5UxNSgtWVQ','z1QL9pkPgw08FwLiuqLX-w','DCnqvmdvbu04hTAv7DX-Mw','M_7cjIKGD3HfQ1G6SyjhkA','rNR390l5MgPHKsdeiS1F9w']:
 			highest_count_users[len(friends_list)] = user
-			if 'TYwQtORbORzcX22xdYBx1g' in friends_list:
-				print('^^^^^^^^^^^^')
-				exit()
 		if len(highest_count_users) == 5:
 			print(len(all_users))
 			break
-
-	if 'TYwQtORbORzcX22xdYBx1g' in all_users:
-		print('HERE')
-		exit()
 
 	return highest_count_users, all_users
 
@@ -192,14 +288,21 @@ def main():
 
 	clear_db()
 	#graph.schema.create_uniqueness_constraint('User', 'userId')
+	# graph.schema.create_uniqueness_constraint('Friend1', 'userId')
+	# graph.schema.create_uniqueness_constraint('Friend2', 'userId')
 
 	f = open("C:/Users/Ravikiran357/Documents/Ravi/ASU/Sem-2/SML-CSE 575/Project/Dataset/Graphfriends.csv", encoding='utf8')
 	csv.field_size_limit(2147483647)
 	#f = open("C:/Users/Ravikiran357/Documents/Ravi/ASU/Sem-2/SML-CSE 575/Project/Dataset/user_ids.csv", encoding='utf8')
 	all_rows = csv.reader(f)
 
-	highest_count_users, all_users = get_highest_friends_count_users(reversed(list(all_rows)))
-	form_friend_relations(highest_count_users, all_users, 5)
+	all_users, all_user_ids = get_friends_count_users(reversed(list(all_rows)))
+	# highest_count_users, all_users = get_friends_count_users(reversed(list(all_rows)))
+	# highest_count_users, all_users = get_known_highest_friends_count_users(reversed(list(all_rows)))
+	num_of_influential_users = 1
+	levels = 3
+	users_at_levels = get_final_node_map(all_users, all_user_ids, num_of_influential_users, levels)
+	create_edges_for_nodes(users_at_levels, levels)
 
 if __name__ == "__main__":
 	main()
