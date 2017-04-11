@@ -1,0 +1,31 @@
+
+
+
+step 1 - set fixed deatils and run details
+  - calculate all run details
+    - user_id_index
+    - random_number
+    - run_number - user_id_index + random_number
+
+    - fixed input_dir
+    - first output_dir = output_dir+run_number
+
+    - second input_dir = next_output_dir+run_number
+    - second output_dir = next_output_dir+run_number
+
+    - name of second run Adjacency list
+
+  - set fixed details
+    - database name
+    - original Adjacency list
+    - User id mapping list
+    - User id vector mapping list
+
+  - Dump this as a json dump as run txt with run number
+    - have two hashes based on run 1 and run 2 with common details and changing details
+
+step 2 - call narens script
+  - pass params to pyhton script with runscript name and run number
+  - pick all details based on run
+  - see if output comes based on that 
+  - see if input matrices are taken based on output
