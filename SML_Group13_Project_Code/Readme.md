@@ -69,18 +69,15 @@
 
 
 * Outputs:
-	* Outputs n similar frames into the output directory. 
-	* Also outputs 
-    	1. the number of unique SIFT vectors considered
-    	2. the overall number of SIFT vectors considered
-    	3. the number of bytes of data from the index accessed to process the query
+	* The output can be ssen in the browser by visiting localhost:7474. The influential user and his friends network will be displayed upon cypher query. The information dissemination is shown in a different color throughout the graph.
 
 * Steps:
-	1. Download the MATLAB software for your operating system.
-	2. Install the MATLAB software with all functionalities.
-	3.  Open the MATLAB code file “Task_6.m”.
-	4. Compile the program and run the program.
-	5. Input the fields in the dialog prompt and click OK.
+	1. In command prompt, change directory to the folder "visual" of the script "graph_plot_neo4j.py".
+	2. Make sure the neo4j local server is running.
+	3. Ensure the path to the input file is given from command line at the time of running the program.
+	4. Run the program from the terminal, using the command; python graph_plot_neo4j.py <file_path> . [The graph data used can be viewed at this link] (https://drive.google.com/open?id=0B0ETTAFdGvp9ZTZNdDZ1cERNYWM)
+	5. Open the browser and type in; localhost:7474.
+	6. To view the resultant graph, in the cypher command line in the browser, run; MATCH (n) RETURN n;
 
 ## Testing PageRank Correctness
 
