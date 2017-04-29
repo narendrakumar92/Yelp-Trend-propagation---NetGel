@@ -1,14 +1,10 @@
-from os import listdir
 import gensim
-from nltk.tokenize import RegexpTokenizer
-tokenizer = RegexpTokenizer(r'\w+')
 import sqlite3 as lite
 import re
-import stop_words_yelp
-from nltk.stem.porter import PorterStemmer
-from stop_words import get_stop_words
-
-stop_word_list = stop_words_yelp.stop_word_list
+# import stop_words_yelp
+# from nltk.stem.porter import PorterStemmer
+# from stop_words import get_stop_words
+# stop_word_list = stop_words_yelp.stop_word_list
 # p_stemmer = PorterStemmer()
 LabeledSentence = gensim.models.doc2vec.LabeledSentence
 it = []
