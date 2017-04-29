@@ -31,11 +31,11 @@
 		3. Provide the correct output relative path for the CSV files in json_to_csv_converter.py
 
 	- Create Database from  CSV Files
-		1. In the createDatabase Folder provide the correct relative path for the CSV files mentioned in the data inputs
+		1. In the create_database Folder provide the correct relative path for the CSV files mentioned in the data inputs
 		2. Run create_database.py to get the database in SQLlite format.
 	
 	- Create Formatted Database
-		1. In the createDatabase Folder provide the correct relative path for the database created from the previous step. 
+		1. In the create_database Folder provide the correct relative path for the database created from the previous step. 
 		2. Run create_format_database.py to get the database in SQLlite format.
 		3. [Databses created by us can by viewed at this link] (https://drive.google.com/open?id=0B5u6zDw91bPWckIyTTd6U3F4ZVk)
 
