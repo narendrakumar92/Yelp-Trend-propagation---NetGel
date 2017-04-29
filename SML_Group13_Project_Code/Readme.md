@@ -72,7 +72,7 @@
 	* The output can be ssen in the browser by visiting localhost:7474. The influential user and his friends network will be displayed upon cypher query. The information dissemination is shown in a different color throughout the graph.
 
 * Steps:
-	1. In command prompt, change directory to the folder "visual" of the script "graph_plot_neo4j.py".
+	1. In command prompt, change directory to the folder "visual" to get the script "graph_network_plot.py".
 	2. Make sure the neo4j local server is running.
 	3. Ensure the path to the input file is given from command line at the time of running the program.
 	4. Run the program from the terminal, using the command; python graph_plot_neo4j.py <file_path> . [The graph data used can be viewed at this link] (https://drive.google.com/open?id=0B0ETTAFdGvp9ZTZNdDZ1cERNYWM)
