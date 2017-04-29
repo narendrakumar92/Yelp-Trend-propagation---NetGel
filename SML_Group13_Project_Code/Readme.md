@@ -1,10 +1,10 @@
-#CSE 575 Statistical Machine Learning:
+# CSE 575 Statistical Machine Learning:
 
-#Group 13
+# Group 13
 
-##Yelp Trend Propagation: Finding like-minded Influential user to spread Information 
+## Yelp Trend Propagation: Finding like-minded Influential user to spread Information 
 
-##Dataset Processing and Database Set Up
+## Dataset Processing and Database Set Up
 
 * Assumptions:
 	* SQLlite3 is Installed
@@ -39,7 +39,7 @@
 		2. Run create_format_database.py to get the database in SQLlite format.
 		3. [Databses created by us can by viewed at this link] (https://drive.google.com/open?id=0B5u6zDw91bPWckIyTTd6U3F4ZVk)
 
-##Visualizing K-means vs Twitter rank hit ratios
+## Visualizing K-means vs Twitter rank hit ratios
 
 * Assumptions: 
 	* Neo4j is installed
