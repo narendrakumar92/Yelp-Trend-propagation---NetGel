@@ -1,0 +1,13 @@
+DOC2VEC README:
+
+1.	Install the necessary libraries as listed: genism, sqlite3, re, stop_words.
+
+2.	Download the database file named smlProject_v2_usr(str-4,fans-50,review_count-50)_business(review_count-5).db.
+
+3.	Load the database file using sqlite3 using the command sqlite3 smlProject_v2_usr(str-4,fans-50,review_count-50)_business(review_count-5).db on command line.
+
+4.	Run the script.
+
+5.	The script generates a doc2vec.model file which is the saved state of our doc2vec model.
+
+6.	The script also generates the output Doc2Vec_kmeans.txt file which contains all the userids and their cluster assignments.
