@@ -45,9 +45,12 @@
 	
 * Data Inputs:
 	* smlProject_v2_usr(str-4,fans-50,review_count-50)_business(review_count-5).db - Database used for topic modelling
+	* userid_adjacency_original.out - UserId Adjacney list calculated using the friend ids
+	* user_id_lda_topic_scores.out - UserId topic scores calculated from calculate LDA step
 
 * Outputs:
-	* userid_adjacency_original.out - UserId Adjacney list calculated using the friend ids
+	* userid_adjacency_original.out - UserId Adjacency list calculated using the friend ids
+	* user_id_lda_topic_scores.out - UserId topic scores calculated from calculate LDA step
 
 * Steps - calculate_lda:
 	* Provide the correct relative path for the listed required input files
@@ -66,8 +69,39 @@
 		4. To apply LDA to the generated and pruned corpus please execute corpusLDA function from LDA_Formulation.py
 	- Perform LDA for each User
 		1. To apply LDA on every user please call the function usewrReviewLDA from LDA_Formulation.py 
-	- Create the Adjacency Matirx for topics
-		1. To create the 10 Matices with respect to the topics please call readUserTopics function from LDA_Formualtion.py 
+	- Create the Adjacency Matrix for topics
+		1. To create the 10 Matrices with respect to the topics please call readUserTopics function from LDA_Formualtion.py
+
+## Perform Page Rank for Kmeans and TwitterRank
+
+* Assumptions: 
+	* Python version 3 is installed.
+
+* Data Inputs Assumptions:
+	* FileNameAdj is the prefix of the Adjacency Matrix files
+	* FileNameDocWord is the name of the file containing the Document term Matrix
+
+* Data Inputs: 
+	1. Adjacency Matrix
+	2. Document Term Matrix
+
+* Outputs:
+	* resultpagerank score followed by the node index. The results are sorted in descending order.
+
+* Steps
+	* Provide the correct input relative path for the listed required input files in an input folder 
+	- Execute Twitter Rank
+		1. Ensure the adjacency matrices and the document term matrix are in the input folder.
+		2. Execute the script pagerank_tr.py
+	- Execute K-Means Pagerank
+		1. Ensure the adjacency matrices is in the input folder.
+		2. Execute the script pagerank_KMeans.py
+	- Calculate the No Of Connections
+		1. Ensure the adjacency matrices of relationships an unweighted graph showing all friend relationships is in the input folder. 
+		2. Execute the script noOfConnections.py
+	- Determine Active vs Influential users
+		1. Ensure document term matrix and the user list files from the previous step are in the input folder.
+		2. Execute the script activeUsers.py
 
 ## Perform Topic Clustrering Using Doc2Vec
 
@@ -85,7 +119,7 @@
 
 * Steps - calculate_doc2vec:
 	* Set the relative path for the Database to be used.
-	* exectute doc2vec_final.py
+	* execute doc2vec_final.py
 
 
 ## Visualising K-means vs Twitter rank hit ratios
@@ -99,7 +133,7 @@
 
 
 * Outputs:
-	* The output can be ssen in the browser by visiting localhost:7474. The influential user and his friends network will be displayed upon cypher query. The information dissemination is shown in a different color throughout the graph.
+	* The output can be seen in the browser by visiting localhost:7474. The influential user and his friends network will be displayed upon cypher query. The information dissemination is shown in a different colour throughout the graph.
 
 * Steps:
 	1. In command prompt, change directory to the folder "visual" to get the script "graph_network_plot.py".
@@ -115,7 +149,7 @@
  	* Python 2.7 Installed 	
 
  * Data Inputs: 
-	* userid_adjacency_original.out - UserId Adjacney list calculated using the friend ids
+	* userid_adjacency_original.out - UserId Adjacency list calculated using the friend ids
 	* user_id_mapping_list.out - The index and UserID mapping
 	* user_id_lda_topic_scores.out - UserId topic scores calculated from calculate LDA step
 	* smlProject_v2_usr(str-4,fans-50,review_count-50)_business(review_count-5).db - The pruned database generated in create database step
@@ -123,7 +157,7 @@
 * Outputs
 	1.  userid_topic_adjaceny_list - For Each topic
 	2.  pagrank_topic_result - For Each topic
-	3.  influential_node_result - the userid index selected and the matirx computation
+	3.  influential_node_result - the userid index selected and the matrix computation
 
 * Steps - test_pageRank:
 	1. Provide the correct input relative path for the listed required input files
