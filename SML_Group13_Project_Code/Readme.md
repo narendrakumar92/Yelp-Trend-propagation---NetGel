@@ -39,6 +39,25 @@
 		2. Run create_format_database.py to get the database in SQLlite format.
 		3. [Databases created by us can by viewed at this link] (https://drive.google.com/open?id=0B5u6zDw91bPWckIyTTd6U3F4ZVk)
 
+## Perform Topic Clustrering Using Doc2Vec
+
+* Assumptions: 
+	* genism is installed.
+	* re is installed.
+	* stop_words is installed.
+
+* Data Inputs:
+	* smlProject_v2_usr(str-4,fans-50,review_count-50)_business(review_count-5).db - Database used for topic modelling
+
+* Output
+	* doc2vec.model - saved state of our doc2vec model 
+	* Doc2Vec_kmeans.txt - contains all the userids and their cluster assignments.
+
+* Steps
+	* Set the relative path for the Database to be used.
+	* exectute doc2vec_final.py
+
+
 ## Visualising K-means vs Twitter rank hit ratios
 
 * Assumptions: 
