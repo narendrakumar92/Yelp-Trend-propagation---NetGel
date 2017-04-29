@@ -100,4 +100,4 @@ if __name__ == '__main__':
     user_id = extractUserID(con)
     model()
     vec = user_vectors(user_id)
-    Kmeans_Transform(5,"Doc2Vec_Kmeans.txt",user_id,vec)z
+    Kmeans_Transform(5,"Doc2Vec_Kmeans.txt",user_id,vec)
