@@ -24,7 +24,7 @@
 	* Output of all csv files into respected tables in an SQLlite database file
 	* Output of a pre-processed table Reviews_Business_Users in an SQLlite database file
 
-* Steps:
+* Steps - create_database:
 	- Convert CSV into JSON format
 		1. Clone the repo https://github.com/Yelp/dataset-examples
 		2. Provide the correct input relative path for the JSON files in json_to_csv_converter.py
@@ -39,6 +39,36 @@
 		2. Run create_format_database.py to get the database in SQLlite format.
 		3. [Databases created by us can by viewed at this link] (https://drive.google.com/open?id=0B5u6zDw91bPWckIyTTd6U3F4ZVk)
 
+
+## Perform Topic Clustering for Kmeans and TwitterRank
+
+	
+* Data Inputs:
+	* smlProject_v2_usr(str-4,fans-50,review_count-50)_business(review_count-5).db - Database used for topic modelling
+
+* Outputs:
+	* userid_adjacency_original.out - UserId Adjacney list calculated using the friend ids
+
+* Steps - calculate_lda:
+	* Provide the correct relative path for the listed required input files
+	-  Calculate adjacency List
+		1. execute matrix_FriendsList function from graph.py to get the required adjacency matrix in regards to the database file used.
+	-  Calculate Similarity Computation
+		1. Compute weight of the edges with respect to the adjacency matrix
+		2. execute similarityComputation function from graph.py 
+	- Perform K-Means Clustering for Users
+		1. Execute k-means clustering based on similarity computation of edges from previous step
+		2. to achieve this please call Kmeans_clusterSeparate from graph.py
+	- Create LDA Corpus
+		1.	Select all the reviews from the database to create the corpus
+		2. execute corpusFormulation function from LDA_formulation.py
+		3. execute LDAUnique function from LDA_formulation.py to remove the stop words from the corpus
+		4. To apply LDA to the generated and pruned corpus please execute corpusLDA function from LDA_Formulation.py
+	- Perform LDA for each User
+		1. To apply LDA on every user please call the function usewrReviewLDA from LDA_Formulation.py 
+	- Create the Adjacency Matirx for topics
+		1. To create the 10 Matices with respect to the topics please call readUserTopics function from LDA_Formualtion.py 
+
 ## Perform Topic Clustrering Using Doc2Vec
 
 * Assumptions: 
@@ -49,11 +79,11 @@
 * Data Inputs:
 	* smlProject_v2_usr(str-4,fans-50,review_count-50)_business(review_count-5).db - Database used for topic modelling
 
-* Output
+* Output:
 	* doc2vec.model - saved state of our doc2vec model 
 	* Doc2Vec_kmeans.txt - contains all the userids and their cluster assignments.
 
-* Steps
+* Steps - calculate_doc2vec:
 	* Set the relative path for the Database to be used.
 	* exectute doc2vec_final.py
 
@@ -98,7 +128,7 @@
 	2.  pagrank_topic_result - For Each topic
 	3.  influential_node_result - the userid index selected and the matirx computation
 
-* Steps:
+* Steps - test_pageRank:
 	1. Provide the correct input relative path for the listed required input files
 	2. Provide the correct output relative path.
 	3. Run test_script_tr.py 
