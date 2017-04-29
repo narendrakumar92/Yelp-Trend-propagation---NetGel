@@ -9,7 +9,7 @@ from nltk.stem.porter import PorterStemmer
 from stop_words import get_stop_words
 
 stop_word_list = stop_words_yelp.stop_word_list
-p_stemmer = PorterStemmer()
+# p_stemmer = PorterStemmer()
 LabeledSentence = gensim.models.doc2vec.LabeledSentence
 it = []
 
