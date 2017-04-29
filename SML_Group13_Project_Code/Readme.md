@@ -28,7 +28,7 @@
 	- Convert CSV into JSON format
 		1. Clone the repo https://github.com/Yelp/dataset-examples
 		2. Provide the correct input relative path for the JSON files in json_to_csv_converter.py
-		* Provide the correct output relative path for the CSV files in json_to_csv_converter.py
+		3. Provide the correct output relative path for the CSV files in json_to_csv_converter.py
 
 	- Create Database from  CSV Files
 		1. In the createDatabase Folder provide the correct relative path for the CSV files mentioned in the data inputs
@@ -50,10 +50,11 @@
 
 
 * Outputs:
-Outputs n similar frames into the output directory. Also outputs 
-    1. the number of unique SIFT vectors considered
-    2. the overall number of SIFT vectors considered
-    3. the number of bytes of data from the index accessed to process the query
+	* Outputs n similar frames into the output directory. 
+	* Also outputs 
+    	1. the number of unique SIFT vectors considered
+    	2. the overall number of SIFT vectors considered
+    	3. the number of bytes of data from the index accessed to process the query
 
 * Steps:
 	1. Download the MATLAB software for your operating system.
